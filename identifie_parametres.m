@@ -1,8 +1,8 @@
 %% definition de A et b 
 
-A= @(x) [-x(1) x(2)-x(1) 0 -x(4) x(5)-x(4) 0 -x(7) 0 0 ;
-    0 x(1)-x(2) x(3)-x(2) 0 x(4)-x(5) x(6)-x(5) 0 -x(8) 0;
-    0 0 x(2)-x(3) 0 0 x(5)-x(6) 0 0 -x(9)];
+A= @(x) [-x(1) x(4)-x(1) 0 -x(2) x(5)-x(2) 0 -x(3) 0 0 ;
+    0 x(1)-x(4) x(7)-x(4) 0 x(2)-x(5) x(8)-x(5) 0 -x(6) 0;
+    0 0 x(4)-x(7) 0 0 x(5)-x(8) 0 0 -x(9)];
 
 
 phi = [];
@@ -10,7 +10,7 @@ Y= [];
 x_temp=[];
 % on a besoin de 9 mesures 
 for k=1:9
-    i=randi(800)%pour ne pas prendre les premières données qui se ressemblent
+    i=randi(801);%pour ne pas prendre les premières données qui se ressemblent
     x_temp(1)= alpha(i);
     x_temp(2)=vit_alpha(i);
     x_temp(3)=acc_alpha(i);
@@ -27,7 +27,7 @@ for k=1:9
     
     phi = [phi; A(x)];
 
-    F=[f(i);0;0];
+    F=[-f(i);0;0];
 
     Y=[Y;F];
 

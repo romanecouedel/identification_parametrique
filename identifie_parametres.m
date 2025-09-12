@@ -9,8 +9,11 @@ phi = [];
 Y= [];
 x_temp=[];
 % on a besoin de 9 mesures 
-for k=1:9
+ki=[]
+for k=1:20
+    
     i=randi(800);%pour ne pas prendre les premières données qui se ressemblent
+    ki=[ki,i];
     x_temp(1)= alpha(i);
     x_temp(2)=vit_alpha(i);
     x_temp(3)=acc_alpha(i);
@@ -34,3 +37,4 @@ for k=1:9
 end
 %pseudo inverse droite car matrice pas carré 27*9
 p_chapeau=inv(phi'*phi)*phi'*Y;
+ki

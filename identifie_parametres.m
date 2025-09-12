@@ -32,5 +32,6 @@ for k=1:9
     Y=[Y;F];
 
 end
+phi
 %pseudo inverse droite car matrice pas carré 27*9
 p_chapeau=inv(phi'*phi)*phi'*Y;

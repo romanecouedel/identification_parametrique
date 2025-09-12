@@ -1,0 +1,11 @@
+clear all;
+close all;
+definit_parametres;
+simule_systeme;
+alpha= 0.000001*round(alpha*1000000);
+vit_alpha=0.0001*round(vit_alpha*1000);
+acc_alpha=0.0001*
+identifie_parametres;
+
+p_chapeau
+difference_p=p_chapeau-[k0;k1;k2;b0;b1;b2;m1;m2;m3]

@@ -10,7 +10,7 @@ Y= [];
 x_temp=[];
 % on a besoin de 9 mesures 
 for k=1:9
-    i=randi(801);%pour ne pas prendre les premières données qui se ressemblent
+    i=randi(800);%pour ne pas prendre les premières données qui se ressemblent
     x_temp(1)= alpha(i);
     x_temp(2)=vit_alpha(i);
     x_temp(3)=acc_alpha(i);

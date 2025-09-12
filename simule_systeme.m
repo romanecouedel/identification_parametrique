@@ -1,5 +1,4 @@
 %% tailles des mesures
-
 t = 0:0.01:8; % toutes les 10 ms dans le temps de 0 à 8 sec
 
 f = ones(size(t));   % échelon unitaire

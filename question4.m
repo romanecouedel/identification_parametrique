@@ -3,7 +3,8 @@ close all;
 definit_parametres;
 simule_systeme;
 
-u=0.75;
+
+u=0.76;
 %quantification et filtrage alpha 
 alpha= 0.00001*round(alpha*100000);
 alpha= filtfilt([1 u-1], u, alpha);

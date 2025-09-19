@@ -54,7 +54,7 @@ axis square
 figure;
 plot(u1,Y1*p1,'.')
 hold on
-plot([min(u) max(u)],[min(u) max(u)],'--g','LineWidth',2)
+plot([min(u1) max(u1)],[min(u1) max(u1)],'--g','LineWidth',2)
 grid on
 xlabel('$y$','Interpreter','latex','FontSize',16)
 ylabel('$\hat{y}$','Interpreter','latex','FontSize',16)

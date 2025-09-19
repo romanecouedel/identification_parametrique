@@ -18,10 +18,10 @@ acc_gamma = zeros(size(t));
 %% Définition des fonctions de transfert
 % Termes propres et couplages pour chaque masse
 s=tf('s');
-f1=-k0-k1-(b0+b1)*s-m1*s^2;
+f1=-k1-b1*s-m1*s^2;
 f2=k1+b1*s;
 f3=k1+b1*s;
-f4=-k1-k2-(b1+b2)*s-m2*s^2;
+f4=-k1-b1*s-m2*s^2;
 f5=k2+b2*s;
 f6=k2+b2*s;
 f7=-k2-b2*s-m3*s^2;
@@ -37,7 +37,7 @@ G3 =-f6*G2/f7;
 %% Réponse à un échelon
 figure('Name','Réponses du système','NumberTitle','off');
 % --- Alpha ---
-subplot(3,1,1);
+subplot(1,3,1);
 [alpha,t] = lsim(G1,f,t);
 step(G1,t)
 grid on;
@@ -49,7 +49,7 @@ title('Réponse de G1 : position \alpha','FontSize',14);
 [acc_alpha,~] = lsim(tf([1 0 0],1)*G1,f,t);
 
 % --- Beta ---
-subplot(3,1,2);
+subplot(1,3,2);
 [beta,~] = lsim(G2,f,t);
 step(G2, t);
 grid on;
@@ -61,7 +61,7 @@ title('Réponse de G2 : position \beta','FontSize',14);
 [acc_beta,~] = lsim(tf([1 0 0],1)*G2,f,t);
 
 % --- Gamma ---
-subplot(3,1,3);
+subplot(1,3,3);
 [gamma,~] = lsim(G3,f,t);
 step(G3, t);
 grid on;
@@ -71,3 +71,20 @@ title('Réponse de G3 : position \gamma','FontSize',14);
 % vitesses et accélérations
 [vit_gamma,~] = lsim(tf([1 0],1)*G3,f,t);
 [acc_gamma,~] = lsim(tf([1 0 0],1)*G3,f,t);
+
+%% Réponse à un échelon
+figure('Name','Réponses du système','NumberTitle','off');
+M=m1+m2+m3;
+G11=1/(k0+b0*s+M*s^2)
+% --- Alpha ---
+subplot(1,3,1);
+[p,t] = lsim(G11,f,t);
+step(G11,t)
+grid on;
+xlabel('Temps (s)','FontSize',12);
+ylabel('\alpha (m)','FontSize',12);
+title('Réponse de G1 : position \alpha','FontSize',14);
+% vitesses et accélérations
+[vit_p,~] = lsim(tf([1 0],1)*G11,f,t);
+[acc_p,~] = lsim(tf([1 0 0],1)*G11,f,t);
+

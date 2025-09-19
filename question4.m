@@ -9,7 +9,7 @@ u=0.76;
 alpha_normal = alpha;
 alpha= 0.00001*round(alpha*100000);
 alpha_q= alpha;
-alpha= filtfilt(u,[1 u-1], alpha);
+alpha= filtfilt([1 u-1],u, alpha);
 alpha_qf = alpha;
 
 alpha_normal = vit_alpha;

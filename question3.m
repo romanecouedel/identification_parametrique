@@ -1,8 +1,8 @@
 clear all;
 close all;
 definit_parametres;
-k1=5000;
-b1=400;
+k1=500000;
+b1=40000;
 simule_systeme;
 %quantification alpha 
 alpha= 0.00001*round(alpha*100000);

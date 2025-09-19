@@ -6,37 +6,37 @@
 %close all
 %clc
 %clear all; %% efface toutes les variables existantes
-load releve_vit_cste_axe2; %% charge les relevés expérimentaux
+load releve_vit_cste_axe1; %% charge les relevÃ©s expÃ©rimentaux
 
-%% Paramètres connus a priori:
+%% ParamÃ¨tres connus a priori:
 kc2=0.0525; %% constante de couple de l'axe 2.
-N2=4.5; %% inverse du rapport de réduction de l'axe 2.
+N2=4.5; %% inverse du rapport de rÃ©duction de l'axe 2.
 
 kc1=0.0525;
 N1=20.25;
 %% Construction de la matrice Y.
-for k=1:2000
+for k=1:29344
     i=randi(29344);
-    Y(k,:) = [cos(q2(i)) sign(qp2(i)) qp2(i) 1 ];
-    u(k,:) = N2*kc2*i2(i);
+    Y1(k,:) = [cos(q1(i)) sign(qp1(i)) qp1(i) 1 ];
+    u1(k,:) = N1*kc1*i1(i);
 end
 
-%% Calcul des paramètres
-p=inv(Y'*Y)*Y'*u;
-%% Affichage des résultats.
+%% Calcul des paramÃ¨tres
+p1=inv(Y1'*Y1)*Y1'*u1;
+%% Affichage des rÃ©sultats.
 format long
-disp('Paramètres estimés à partir des données brutes :');
-p'
-
+disp('ParamÃ¨tres estimÃ©s Ã  partir des donnÃ©es brutes :');
+%p'
+p1'
 figure(1)
 clf; %% clear figure
-h=plot3(q2,qp2,kc2*N2*i2,'x');
+h=plot3(q1,qp1,kc1*N1*i1,'x');
 set(h,'LineWidth',0.5);
-hold on; %% permet de conserver le graphique et d'en ajouter d'autres sur la même fig.
-%h=plot3(q2,qp2,Y*p,'.');
+hold on; %% permet de conserver le graphique et d'en ajouter d'autres sur la mÃªme fig.
+%h=plot3(q1,qp1,Y1*p1,'.');
 set(h,'LineWidth',1.5);
-title('Résultats de l''identification sans filtrage');
-legend('\Gamma_2 non filtré', 'modèle');
+title('RÃ©sultats de l''identification sans filtrage');
+legend('\Gamma_2 non filtrÃ©', 'modÃ¨le');
 grid on;
 xlabel('$q_2$','Interpreter','latex')
 ylabel('$\dot{q}_2$','Interpreter','latex')
@@ -46,13 +46,13 @@ zlabel('$\tau$','Interpreter','latex')
 %% Extra plots to check the quality of the identification
 
 figure;
-qqplot(Y*p-u)
+qqplot(Y1*p1-u1)
 grid on
 axis equal
 axis square
 
 figure;
-plot(u,Y*p,'.')
+plot(u1,Y1*p1,'.')
 hold on
 plot([min(u) max(u)],[min(u) max(u)],'--g','LineWidth',2)
 grid on

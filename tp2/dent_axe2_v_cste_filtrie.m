@@ -4,8 +4,7 @@
 %% M. Khoramshahi 02-02-2023
 
 close all
-clc
-clear all; %% efface toutes les variables existantes
+clc%% efface toutes les variables existantes
 load releve_vit_cste_axe2; %% charge les relevés expérimentaux
 
 %% Paramètres connus a priori:

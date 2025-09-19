@@ -3,9 +3,8 @@
 %% G. MOREL - 29-12-05.
 %% M. Khoramshahi 02-02-2023
 
-%close all
-%clc
-%clear all; %% efface toutes les variables existantes
+close all
+clc %% efface toutes les variables existantes
 load releve_vit_cste_axe1; %% charge les relevés expérimentaux
 
 %% Paramètres connus a priori:
@@ -22,12 +21,12 @@ for k=1:29344
 end
 
 %% Calcul des paramètres
-p1=inv(Y1'*Y1)*Y1'*u1;
+p11=inv(Y1'*Y1)*Y1'*u1;
 %% Affichage des résultats.
 format long
 disp('Paramètres estimés à partir des données brutes :');
 %p'
-p1'
+p11'
 figure(1)
 clf; %% clear figure
 h=plot3(q1,qp1,kc1*N1*i1,'x');
@@ -46,13 +45,13 @@ zlabel('$\tau$','Interpreter','latex')
 %% Extra plots to check the quality of the identification
 
 figure;
-qqplot(Y1*p1-u1)
+qqplot(Y1*p11-u1)
 grid on
 axis equal
 axis square
 
 figure;
-plot(u1,Y1*p1,'.')
+plot(u1,Y1*p11,'.')
 hold on
 plot([min(u1) max(u1)],[min(u1) max(u1)],'--g','LineWidth',2)
 grid on

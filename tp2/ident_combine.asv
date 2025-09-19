@@ -1,7 +1,6 @@
 clear all;
 load releve_mvts_combines;
-ident_axe1_v_cste
-ident_axe2_v_cste
+
 
 %% constantes connues
 kc1=0.0525;
@@ -24,8 +23,8 @@ c2=p(4);
 %% identification à partir des données filtrées
 for(i=1:length(t)) 
     
-    Z(2*i-1:2*i,1:3)=[qpp1(i) qpp2(i)*cos(q1(i)-q2(i))-(qp2(i)^2)*sin(q2(i)-q1(i)) 0 ;
-        0 qpp1(i)*cos(q2(i)-q1(i))+q1(i)^2*sin(q2(i)-q1(i)) qpp2(i)];
+    Z(2*i-1:2*i,1:3)=[qpp1(i) qpp2(i)*cos(q1(i)-q2(i))-(qp2(i)^2)*sin(q2(i)-q1(i)) 0 
+        0 qpp2(i)*cos(q2(i)-q1(i))+q1(i)^2*sin(q2(i)-q1(i)) qpp2(i)];
     u(2*i-1,1)=N1*kc1*i1(i)-alpha1*cos(q1(i))-a1*sign(q1(i))+b1*qp1(i)+c1;
     u(2*i,1)=N2*kc2*i2(i)-alpha2*cos(q2(i))-a2*sign(q2(i))+b2*qp2(i)+c2;
 end

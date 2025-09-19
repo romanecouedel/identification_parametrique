@@ -18,12 +18,15 @@ N1=20.25;
 
 
 %% Construction de la matrice Y.
-for k=1:??
-    Y(i,??) = ??
-    u(i,??) = ??
+for k=1:4
+    i=randi(29344)
+    Y(k,:) = [cos(q2(i)) sign(qp2(i)) qp2(i) 1]
+    u(k,1) = N2*kc2*i2(i)
+
+
 end
 %% Calcul des paramètres
-p=??;
+p=inv(Y'*Y)*Y'*u
 
 %% Affichage des résultats.
 format long

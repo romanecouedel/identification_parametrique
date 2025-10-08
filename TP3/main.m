@@ -1,10 +1,10 @@
 clc
 clear all
 
-p=[1,1,1,1,0,0,0,0,0,0];
-theta=[1,1,1];
-dim=;
-y1=mod_geom(theta,p);
+p=[1,1,1,1,0,0,0,3,0,0];
+theta=[0,0,0];
+dim=9;
+y1=mod_geom(theta,p)
 h=10^(-6);
 p2=p;
 p2(dim)=p2(dim)+h

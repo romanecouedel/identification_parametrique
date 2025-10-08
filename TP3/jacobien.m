@@ -23,7 +23,7 @@ J7=R*[-l3*sin(t1+t2+t3);l3*cos(t1+t2+t3);1]
 J8=R*[1;0;0];
 J9=R*[0;1;0];
 J10=R*[0;0;1];
-J=[J1 J2 J3 J4 J5 J6 J7 J8 J9 J10]
+J=[J1 J2 J3 J4 J5 J6 J7 J8 J9 J10];
 
 end
 

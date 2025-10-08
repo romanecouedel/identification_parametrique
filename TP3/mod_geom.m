@@ -1,8 +1,8 @@
 function  X=modele_geom(theta,p)
     %%% p=[l0,l1,l2,l3,theta1_offset, theta2_offset, theta3_offset,xc,yc,alphac]
     %%% theta=[theta1, theta2, theta3]
-    disp(p);
-    disp(theta)
+    %disp(p);
+    %disp(theta)
     theta1=p(5)+theta(1);
     theta2=p(6)+theta(2);
     theta3=p(7)+theta(3);
@@ -18,5 +18,5 @@ function  X=modele_geom(theta,p)
     M=M-[xc;yc];
     C=[cos(alphac), -sin(alphac);
         sin(alphac), cos(alphac)];
-    X=M*
+    X=inv(C)*M;
 end

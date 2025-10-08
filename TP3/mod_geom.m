@@ -20,5 +20,5 @@ function  X=modele_geom(theta,p)
     C=[cos(alphac), -sin(alphac), 0;
         sin(alphac), cos(alphac), 0;
         0,0,1];
-    X=inv(C)*M;
+    X=C*M;
 end

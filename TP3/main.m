@@ -1,10 +1,11 @@
 clc
 clear all
-%% question 1 et 2
+ theta(1)=(rand() - 0.5) * pi;
+    theta(2)=(rand() - 0.5) * pi;
+    theta(3)=(rand() - 0.5) * pi;
 p=[1,1,1,1,0,0,0,3,0,0];
-theta=[0,0,0];
-plot_robot(theta,p);
-dim=9;
+
+dim=1;
 y1=mod_geom(theta,p)
 h=10^(-6);
 p2=p;
@@ -14,7 +15,19 @@ Jn=(y2-y1)/h;
 Jc=jacobien(theta,p);
 Jt=Jc(:,dim);
 err=Jt-Jn
-%% question 3
+plot_robot(theta,p)
+theta(1)=pi/2;
+theta(2)=pi/3;
+theta(3)=pi/4;
+p=[0.2 0.3 0.2 0.1 -0.1 0.08 0.1 0.03 0.025 0.6];
+Jf=jacobien(theta,p);
+for k=1:9
+    
+    theta(1)=(rand() - 0.5) * pi;
+    theta(2)=(rand() - 0.5) * pi;
+    theta(3)=(rand() - 0.5) * pi;
+    J=jacobien(theta,p);
+    Jf=[Jf;J];
 
-%% question 4
-creer_data(p);
+end
+

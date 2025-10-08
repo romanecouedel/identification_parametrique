@@ -14,9 +14,11 @@ function  X=modele_geom(theta,p)
     yc=p(9);
     alphac=p(10);
     M=[l3*cos(theta1+theta2+theta3)+l2*cos(theta1+theta2)+l1*cos(theta1);
-        l3*sin(theta1+theta2+theta3)+l2*sin(theta1+theta2)+l1*sin(theta1)];
-    M=M-[xc;yc];
-    C=[cos(alphac), -sin(alphac);
-        sin(alphac), cos(alphac)];
+        l3*sin(theta1+theta2+theta3)+l2*sin(theta1+theta2)+l1*sin(theta1)+l0;
+        0];
+    M=M-[xc;yc;alphac];
+    C=[cos(alphac), -sin(alphac), 0;
+        sin(alphac), cos(alphac), 0;
+        0,0,1];
     X=inv(C)*M;
 end

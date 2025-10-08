@@ -1,17 +1,14 @@
 function plot_robot(theta, p)
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % TRACE DU ROBOT 3R PLAN AVEC DÉCALAGE l0 ET REPÈRE CAMÉRA
-    % 
+     
     % p = [l0 l1 l2 l3 theta1_offset theta2_offset theta3_offset xc yc alphac]
     % theta = [theta1 theta2 theta3]
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
 
     % --- Extraction des paramètres
     l0 = p(1); l1 = p(2); l2 = p(3); l3 = p(4);
     o1 = p(5); o2 = p(6); o3 = p(7);
     xc = p(8); yc = p(9); alphac = p(10);
 
-    % --- Angles corrigés
     th1 = theta(1) + o1;
     th2 = theta(2) + o2;
     th3 = theta(3) + o3;
@@ -34,8 +31,8 @@ function plot_robot(theta, p)
     text(OT(1)+0.05, OT(2)+0.05, 'O_T', 'FontWeight', 'bold');
 
     % --- Tracé du repère de base R0
-    quiver(O0(1), O0(2), 0.4, 0, 0, 'r', 'LineWidth', 1.5);
-    quiver(O0(1), O0(2), 0, 0.4, 0, 'g', 'LineWidth', 1.5);
+    quiver(O0(1), O0(2), 0.4, 0, 0, 'r', 'LineWidth', 1.5);% fleche vers x 
+    quiver(O0(1), O0(2), 0, 0.4, 0, 'g', 'LineWidth', 1.5);%fleche vers y
     text(O0(1)+0.1, O0(2)+0.1, 'R_0', 'FontWeight', 'bold');
 
     % --- Tracé du repère terminal R_T

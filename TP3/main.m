@@ -30,4 +30,6 @@ for k=1:9
     Jf=[Jf;J];
 
 end
+%% question 4
+resoud_id();
 

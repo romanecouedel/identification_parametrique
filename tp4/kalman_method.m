@@ -1,80 +1,113 @@
 function rls_method()
 load("releve_vit_cste_axe2.mat");
+
 %% Paramètres connus a priori
+kc2 = 0.0525;  % constante de couple axe 2
+N2 = 4.5;      % inverse du rapport de réduction de l’axe 2
 
-kc2=0.0525; %% constante de couple de l'axe 2.
-N2=4.5; %% inverse du rapport de réduction de l'axe 2.
+kc1 = 0.0525;
+N1 = 20.25;
 
-kc1=0.0525;
-N1=20.25;
-
-%% plot
+%% --- Plot initial ---
 figure(1)
-clf; %% clear figure
-h=plot3(q2,qpfil2,kc2*N2*ifil2,'x');
-set(h,'LineWidth',0.5);
-hold on; %% permet de conserver le graphique et d'en ajouter d'autres sur la même fig.
-set(h,'LineWidth',1.5);
+clf;
+h = plot3(q2, qpfil2, kc2 * N2 * ifil2, 'x');
+set(h, 'LineWidth', 1.5);
+hold on;
 title('Relation entre position, vitesse et couple de l''axe 2');
 legend('\Gamma_2 filtré', 'modèle');
 grid on;
-xlabel('$q_2$','Interpreter','latex')
-ylabel('$\dot{q}_2$','Interpreter','latex')
-zlabel('$\tau$','Interpreter','latex')
+xlabel('$q_2$', 'Interpreter', 'latex');
+ylabel('$\dot{q}_2$', 'Interpreter', 'latex');
+zlabel('$\tau$', 'Interpreter', 'latex');
 
-%% début de l'identification paramétrique 
-% factors
-n=4;%nb de parametre à identifier
-Qk=0;%valeur entre 0 et 1
-Rk=0.01;
-P=1;%initilisation de p 
+%% --- Paramètres généraux ---
+n = 4; % nombre de paramètres
+maxIter = 20000;
 
-%prepa affichage 
-figure(2);
-clf;
-colors = lines(n);
-hold on;
-h = gobjects(n,1);
-for i = 1:n
-    h(i) = plot(NaN, NaN, 'Color', colors(i,:), 'LineWidth', 1.5);
-end
-xlabel('Itération');
-ylabel('\theta_k');
-title('Évolution des paramètres (Kalaman)');
-legend('\theta_1','\theta_2','\theta_3','\theta_4','Location','best');
-grid on;
+Rk_values = [0.01, 0.1, 0.5, 1];
+Qk_values = [0.01, 0.1, 0.5, 1];
 
-% update loop
-y=kc2*N2*ifil2;
-A=[cos(q2),sign(qpfil2),qpfil2,ones(length(q2),1)];% vecteur de regression
-theta=zeros(n,1);% param
-disp(size(A))
-for k=1:length(y)
-    yk=y(k);
-    Ak=A(k,:);
-    % prefit error
-    e=yk-Ak*theta;
-    %Pre-fit covariance
-    S=Ak*P*Ak'+Rk;
-    %rls gain
-    Kk=P*Ak'*inv(S);
+%% ======================================================
+% ========== FIGURE 1 : Effet de Rk =====================
+%% ======================================================
 
-    theta=theta+Kk*e
-    % prefit cov
-    P=(eye(n)-Kk*Ak)*P;
-    % update param
-    
-    %postfit error
-    ep=yk-Ak*theta;
-    % Mise à jour du tracé en temps réel
-    for i = 1:n
-            xData = get(h(i), 'XData');
-            yData = get(h(i), 'YData');
-            set(h(i), 'XData', [xData, k], 'YData', [yData, theta(i)]);
+theta_hist_all_Rk = zeros(maxIter, n, length(Rk_values));
+
+for r = 1:length(Rk_values)
+    Rk = Rk_values(r);
+    Qk = 0; % Qk fixe ici
+    theta = zeros(n,1);
+    P = 1;
+
+    for k = 1:maxIter
+        yk = kc2 * N2 * ifil2(k);
+        Ak = [cos(q2(k)), sign(qpfil2(k)), qpfil2(k), 1];
+
+        e = yk - Ak * theta;
+        S = Ak * (P+Qk) * Ak' + Rk;
+        Kk = (P+Qk) * Ak' / S;
+        theta = theta + Kk * e;
+        P = (eye(n) - Kk * Ak) * (P + Qk);
+
+        theta_hist_all_Rk(k,:,r) = theta';
     end
-    drawnow; % rafraîchit le graphique
-end
-disp('param final');
-disp(theta);
 end
 
+% --- Tracé ---
+figure;
+for i = 1:n
+    subplot(n,1,i);
+    hold on; grid on;
+    for r = 1:length(Rk_values)
+        plot(1:maxIter, theta_hist_all_Rk(:,i,r), 'LineWidth', 1.5, ...
+            'DisplayName', sprintf('Rk=%.2f', Rk_values(r)));
+    end
+    xlabel('Itération');
+    ylabel(sprintf('\\theta_%d', i));
+    title(sprintf('Évolution de \\theta_%d pour différentes valeurs de Rk', i));
+    legend show;
+end
+
+%% ======================================================
+% ========== FIGURE 2 : Effet de Qk =====================
+%% ======================================================
+
+theta_hist_all_Qk = zeros(maxIter, n, length(Qk_values));
+
+for q = 1:length(Qk_values)
+    Qk = Qk_values(q);
+    Rk = 1; % Rk fixe ici
+    theta = zeros(n,1);
+    P = eye(n);
+
+    for k = 1:maxIter
+        yk = kc2 * N2 * ifil2(k);
+        Ak = [cos(q2(k)), sign(qpfil2(k)), qpfil2(k), 1];
+
+        e = yk - Ak * theta;
+        S = Ak * P * Ak' + Rk;
+        Kk = P * Ak' / S;
+        theta = theta + Kk * e;
+        P = (eye(n) - Kk * Ak) * P + Qk * eye(n);
+
+        theta_hist_all_Qk(k,:,q) = theta';
+    end
+end
+
+% --- Tracé ---
+figure;
+for i = 1:n
+    subplot(n,1,i);
+    hold on; grid on;
+    for q = 1:length(Qk_values)
+        plot(1:maxIter, theta_hist_all_Qk(:,i,q), 'LineWidth', 1.5, ...
+            'DisplayName', sprintf('Qk=%.2f', Qk_values(q)));
+    end
+    xlabel('Itération');
+    ylabel(sprintf('\\theta_%d', i));
+    title(sprintf('Évolution de \\theta_%d pour différentes valeurs de Qk', i));
+    legend show;
+end
+
+end

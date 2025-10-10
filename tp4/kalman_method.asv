@@ -22,63 +22,43 @@ xlabel('$q_2$','Interpreter','latex')
 ylabel('$\dot{q}_2$','Interpreter','latex')
 zlabel('$\tau$','Interpreter','latex')
 
-%% début de l'identification paramétrique 
-% factors
-n=4;%nb de parametre à identifier
-Qk=0;%valeur entre 0 et 1
-Rk=0.01;
-P=eye(n);%initilisation de p 
+Rk_values = [0.01, 0.1, 0.5, 1]; % différentes valeurs de Rk
+n = 4; % nombre de paramètres
+Qk_values=[0.]; % ton code original
+maxIter = 5000; % nombre d'itérations
 
-%prepa affichage 
-figure(2);
-clf;
-colors = lines(n);
-hold on;
-h = gobjects(n,1);
-for i = 1:n
-    h(i) = plot(NaN, NaN, 'Color', colors(i,:), 'LineWidth', 1.5);
-end
-xlabel('Itération');
-ylabel('\theta_k');
-title('Évolution des paramètres (RLS)');
-legend('\theta_1','\theta_2','\theta_3','\theta_4','Location','best');
-grid on;
+theta_hist_all = zeros(maxIter, n, length(Rk_values));
 
-% update loop
-y=kc2*N2*ifil2;
-A=[cos(q2),sign(qpfil2),qpfil2,ones(length(q2),1)];% vecteur de regression
-theta=zeros(n,1);% param
-disp(size(A))
-for k=1:length(y)
-    yk=y(k);
-    Ak=A(k,:);
-    Pk=P+Qk;
-    % prefit error
-    e=yk-Ak*theta;
-    %Pre-fit covariance
-    S=Ak*Pk*Ak'+Rk;
-    %rls gain
-    Kk=Pk*Ak'*inv(S);
+% Boucle sur Rk
+for r = 1:length(Rk_values)
+    Rk = Rk_values(r);
+    theta = zeros(n,1);
+    P =1+Qk; % initialisation de P
     
-    theta=theta+Kk*e
-    % prefit cov
-    Pk=(eye(n)-Kk*Ak)*Pk;
-    % update param
-    
-    %postfit error
-    ep=yk-Ak*theta;
-    % Mise à jour du tracé en temps réel
-    for i = 1:n
-            xData = get(h(i), 'XData');
-            yData = get(h(i), 'YData');
-            set(h(i), 'XData', [xData, k], 'YData', [yData, theta(i)]);
+    for k = 1:maxIter
+        yk = kc2*N2*ifil2(k);
+        Ak = [cos(q2(k)), sign(qpfil2(k)), qpfil2(k), 1];
+        
+        e = yk - Ak*theta;
+        S = Ak*P*Ak' + Rk;
+        Kk = P*Ak'/S;
+        theta = theta + Kk*e;
+        P = (eye(n) - Kk*Ak)*P;
+        
+        theta_hist_all(k,:,r) = theta';
     end
-    drawnow; % rafraîchit le graphique
-end
-disp('param final');
-disp(theta);
-% au bout d'un moment j'arrive à des NaN plus ou moins rapidement, est il
-% possible que ce soit à cause d'une matrice non inversible et dans ce cas
-% comment lutter contre ??
 end
 
+% Tracé en subplot
+figure;
+for i = 1:n
+    subplot(n,1,i);
+    hold on; grid on;
+    for r = 1:length(Rk_values)
+        plot(1:maxIter, theta_hist_all(:,i,r), 'LineWidth', 1.5, 'DisplayName', sprintf('Rk=%.2f', Rk_values(r)));
+    end
+    xlabel('Itération');
+    ylabel(sprintf('\\theta_%d', i));
+    title(sprintf('Évolution de \\theta_%d pour différentes valeurs de Rk', i));
+    legend show;
+end

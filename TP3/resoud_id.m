@@ -2,18 +2,20 @@ function resoud_id();
 load("base.mat");
 N=length(data);
 phat=[rand(), rand(),rand(),rand(),rand(),rand(),rand(),rand(),rand(),rand()]
-test_ligne=0:0.01:1;
-J = [zeros(length(phat),length(test_ligne))];
-for phat(1)=test_ligne
-    ERROR = zeros(N,3);
+J = [];
+ERROR = zeros(N,3);
+for iter=1:20
     for i=(1:N)
         th=data(i).theta';
         x=data(i).cartesien';
-        disp(i)
-        disp(th);
-        disp(x);
-        ERROR(i,:)=(x-mod_geom(th,phat))';
-        disp(ERROR(i,:));
+        error=(x-mod_geom(th,phat))';
+        Jj=jacobien(th,phat);
     end
-    J(end+1) = sum(ERROR.^2)/N;
+    J=[J,Jj];
+    ERROR=[ERROR,error];
+    dp = pinv(J) * ERROR;
+    phat=phat+dp; % a revoir 
+    disp(iter);
+    disp(phat);
+end
 end

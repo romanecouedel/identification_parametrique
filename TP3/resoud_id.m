@@ -15,5 +15,5 @@ for phat(1)=test_ligne
         ERROR(i,:)=(x-mod_geom(th,phat))';
         disp(ERROR(i,:));
     end
-    J(1,) = sum(ERROR.^2)/N;
+    J(end+1) = sum(ERROR.^2)/N;
 end

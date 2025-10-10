@@ -1,5 +1,5 @@
 function rls_method()
-load("releve_vit_cste_axe1.mat");
+load("releve_vit_cste_axe2.mat");
 %% Paramètres connus a priori
 
 kc2=0.0525; %% constante de couple de l'axe 2.
@@ -25,8 +25,13 @@ zlabel('$\tau$','Interpreter','latex')
 %% début de l'identification paramétrique 
 % factors
 n=4;%nb de parametre à identifier
-lambda=rand();%valeur entre 0 et 1
-P=0.1*eye(n);%initilisation de p 
+lambda=0.999;%valeur entre 0 et 1
+% on rêgle lambda en fonction des paramêtres à regler, si les paramêtres
+% sont variants alors on va avoir tendance à réduire lambda pour qu'il
+% prenne en compte plus les dernieres mesures alors que si lambda est
+% proche de 1 c'est plus pratique pour des paramêtres fixes vu que on
+% prends bcp en compte les anciennes mesures.
+P=eye(n);%initilisation de p 
 
 %prepa affichage 
 figure(2);
@@ -47,17 +52,23 @@ grid on;
 y=kc2*N2*ifil2;
 A=[cos(q2),sign(qpfil2),qpfil2,ones(length(q2),1)];% vecteur de regression
 theta=zeros(n,1);% param
-disp(size(A))
-for k=1:length(y)
+E=0;
+for k=1:5000
     yk=y(k);
     Ak=A(k,:);
 
     % prefit error
     e=yk-Ak*theta;
     %rls gain
-    Kk=P*Ak'*inv(lambda+Ak*P*Ak');
+    if inv(lambda+Ak*P*Ak')
+        Kk=P*Ak'*inv(lambda+Ak*P*Ak');
+    else
+        disp('pas ok');
+    end
     % prefit cov
-    P=(eye(n)-Kk*Ak)*P/lambda;
+    % a cette ligne si lambda trop petit on va avoir un P très grand ce qui
+    % peut faire diverger
+    P=(1/lambda)*(eye(n)-Kk*Ak)*P;
     % update param
     theta=theta+Kk*e
     %postfit error
@@ -68,11 +79,11 @@ for k=1:length(y)
             yData = get(h(i), 'YData');
             set(h(i), 'XData', [xData, k], 'YData', [yData, theta(i)]);
     end
-    drawnow; % rafraîchit le graphique
+    %drawnow; % rafraîchit le graphique
+    E=E+theta;
 end
-disp('param final');
-disp(theta);
-% au bout d'un moment j'arrive à des NaN plus ou moins rapidement, est il
-% possible que ce soit à cause d'une matrice non inversible et dans ce cas
-% comment lutter contre ??
+thetaTP2=[0.083; 0.058; 0.002; -0.012];
+E=E/k-thetaTP2;
+disp(E)
+
 end

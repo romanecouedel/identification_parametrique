@@ -27,7 +27,7 @@ zlabel('$\tau$','Interpreter','latex')
 n=4;%nb de parametre à identifier
 Qk=0;%valeur entre 0 et 1
 Rk=0.01;
-P=1;%initilisation de p 
+P=eye(n);%initilisation de p 
 
 %prepa affichage 
 figure(2);
@@ -40,7 +40,7 @@ for i = 1:n
 end
 xlabel('Itération');
 ylabel('\theta_k');
-title('Évolution des paramètres (Kalaman)');
+title('Évolution des paramètres (RLS)');
 legend('\theta_1','\theta_2','\theta_3','\theta_4','Location','best');
 grid on;
 
@@ -52,16 +52,17 @@ disp(size(A))
 for k=1:length(y)
     yk=y(k);
     Ak=A(k,:);
+    Pk=P+Qk;
     % prefit error
     e=yk-Ak*theta;
     %Pre-fit covariance
-    S=Ak*P*Ak'+Rk;
+    S=Ak*Pk*Ak'+Rk;
     %rls gain
-    Kk=P*Ak'*inv(S);
-
+    Kk=Pk*Ak'*inv(S);
+    
     theta=theta+Kk*e
     % prefit cov
-    P=(eye(n)-Kk*Ak)*P;
+    Pk=(eye(n)-Kk*Ak)*Pk;
     % update param
     
     %postfit error
@@ -76,5 +77,8 @@ for k=1:length(y)
 end
 disp('param final');
 disp(theta);
+% au bout d'un moment j'arrive à des NaN plus ou moins rapidement, est il
+% possible que ce soit à cause d'une matrice non inversible et dans ce cas
+% comment lutter contre ??
 end
 

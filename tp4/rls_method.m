@@ -1,0 +1,78 @@
+function rls_method()
+load("releve_vit_cste_axe1.mat");
+%% Paramètres connus a priori
+
+kc2=0.0525; %% constante de couple de l'axe 2.
+N2=4.5; %% inverse du rapport de réduction de l'axe 2.
+
+kc1=0.0525;
+N1=20.25;
+
+%% plot
+figure(1)
+clf; %% clear figure
+h=plot3(q2,qpfil2,kc2*N2*ifil2,'x');
+set(h,'LineWidth',0.5);
+hold on; %% permet de conserver le graphique et d'en ajouter d'autres sur la même fig.
+set(h,'LineWidth',1.5);
+title('Relation entre position, vitesse et couple de l''axe 2');
+legend('\Gamma_2 filtré', 'modèle');
+grid on;
+xlabel('$q_2$','Interpreter','latex')
+ylabel('$\dot{q}_2$','Interpreter','latex')
+zlabel('$\tau$','Interpreter','latex')
+
+%% début de l'identification paramétrique 
+% factors
+n=4;%nb de parametre à identifier
+lambda=rand();%valeur entre 0 et 1
+P=0.1*eye(n);%initilisation de p 
+
+%prepa affichage 
+figure(2);
+clf;
+colors = lines(n);
+hold on;
+h = gobjects(n,1);
+for i = 1:n
+    h(i) = plot(NaN, NaN, 'Color', colors(i,:), 'LineWidth', 1.5);
+end
+xlabel('Itération');
+ylabel('\theta_k');
+title('Évolution des paramètres (RLS)');
+legend('\theta_1','\theta_2','\theta_3','\theta_4','Location','best');
+grid on;
+
+% update loop
+y=kc2*N2*ifil2;
+A=[cos(q2),sign(qpfil2),qpfil2,ones(length(q2),1)];% vecteur de regression
+theta=zeros(n,1);% param
+disp(size(A))
+for k=1:length(y)
+    yk=y(k);
+    Ak=A(k,:);
+
+    % prefit error
+    e=yk-Ak*theta;
+    %rls gain
+    Kk=P*Ak'*inv(lambda+Ak*P*Ak');
+    % prefit cov
+    P=(eye(n)-Kk*Ak)*P/lambda;
+    % update param
+    theta=theta+Kk*e
+    %postfit error
+    ep=yk-Ak*theta;
+    % Mise à jour du tracé en temps réel
+    for i = 1:n
+            xData = get(h(i), 'XData');
+            yData = get(h(i), 'YData');
+            set(h(i), 'XData', [xData, k], 'YData', [yData, theta(i)]);
+    end
+    drawnow; % rafraîchit le graphique
+end
+disp('param final');
+disp(theta);
+% au bout d'un moment j'arrive à des NaN plus ou moins rapidement, est il
+% possible que ce soit à cause d'une matrice non inversible et dans ce cas
+% comment lutter contre ??
+end

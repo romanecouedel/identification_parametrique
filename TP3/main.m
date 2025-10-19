@@ -30,6 +30,6 @@ for k=1:9
 
 end
 %% question 4
-resoud_id();
+resoud_id2();
 
 

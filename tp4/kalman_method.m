@@ -1,4 +1,4 @@
-function rls_method()
+function kalman_method()
 load("releve_vit_cste_axe2.mat");
 
 %% Paramètres connus a priori
